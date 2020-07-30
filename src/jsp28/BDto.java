@@ -17,7 +17,7 @@ public class BDto {
 	public BDto() {
 	}
 	
-	public BDto (int bId, String bName, String bTitle, String bContent, Timestamp bDate, int bHit, int bGroup, int bStep, int bIndent) {
+	public BDto (int bId, String bName, String bTitle, String bContent, Timestamp bDate, int bHit, int bGroup, int bStep, int bIndent) { //DAO에서 데이터를 받았을 때 자기 자신 변수에 저장을 함.
 		this.bId = bId;
 		this.bName = bName;
 		this.bTitle = bTitle;

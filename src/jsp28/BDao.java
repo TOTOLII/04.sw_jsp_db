@@ -17,14 +17,14 @@ import sun.security.util.PropertyExpander.ExpandException;
 
 public class BDao {
 	
-	DataSource dataSource;
+	DataSource dataSource; //데이터베이스는 어디서든 불러올수 있도록 전역변수 설정 
 	
 	public BDao() {
 		// TODO Auto-generated constructor stub
 		
 		try {
 			Context context = new InitialContext();
-			dataSource = (DataSource) context.lookup("java:comp/env/jdbc/Oracle11g");
+			dataSource = (DataSource) context.lookup("java:comp/env/jdbc/Oracle11g"); //lookup : 데이터를 찾은 후 사용할 수 있도록 객체를 반환해 주는 메소드
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -32,6 +32,7 @@ public class BDao {
 	}
 	
 	public void write(String bName, String bTitle, String bContent) {
+		System.out.println("bName : " + bName);
 		// TODO Auto-generated method stub
 		
 		Connection connection = null;
@@ -42,9 +43,11 @@ public class BDao {
 			String query = "insert into mvc_board (bId, bName, bTitle, bContent, bHit, bGroup, bStep, bIndent) "
 					+ "     values (mvc_board_seq.nextval, ?, ?, ?, 0, mvc_board_seq.currval, 0, 0)";
 			preparedStatement = connection.prepareStatement(query);
+			System.out.println("sucess");
 			preparedStatement.setString(1, bName);
 			preparedStatement.setString(2, bTitle);
 			preparedStatement.setString(3, bContent);
+			int rn = preparedStatement.executeUpdate();
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -61,15 +64,15 @@ public class BDao {
 	
 	public ArrayList<BDto> list() {
 		
-		ArrayList<BDto> dtos = new ArrayList<BDto>();
-		Connection connection = null;
-		PreparedStatement preparedStatement = null;
-		ResultSet resultSet = null;
+		ArrayList<BDto> dtos = new ArrayList<BDto>(); //dtos라는 배열 객체를 하나 생성
+		Connection connection = null; //데이터베이스 접근을 위한 객체
+		PreparedStatement preparedStatement = null; //쿼리문을 실행하기 위한 객체 생성
+		ResultSet resultSet = null; //결과값을 얻어오기 위한 객체생성
 		
 		try {
-			connection = dataSource.getConnection();
+			connection = dataSource.getConnection(); 
 			
-			String query = "select bId, bName, bTitle, bContent, bData, bHit, bGroup, "
+			String query = "select bId, bName, bTitle, bContent, bDate, bHit, bGroup, "
 					+ "bStep, bIndent from mvc_board order by bGroup desc, bStep asc";
 			preparedStatement = connection.prepareStatement(query);
 			resultSet = preparedStatement.executeQuery();
@@ -93,19 +96,20 @@ public class BDao {
 			e.printStackTrace();
 		} finally {
 			try {
-				if (resultSet != null) resultSet.close();
-				if(preparedStatement != null) preparedStatement.close();
-				if(connection != null) connection.close();
+				if (resultSet != null) resultSet.close(); //사용한 변수 초기화
+				if(preparedStatement != null) preparedStatement.close(); //사용한 변수 초기화
+				if(connection != null) connection.close(); //사용한 변수 초기화
 			} catch (Exception e2) {
 				// TODO: handle exception
-				e2.printStackTrace();
+				e2.printStackTrace(); 
 			}
 		}
-		return dtos;
+		return dtos; //요청했던 객체인 BListCommand폼의 dao.list();에게 요청값을 반환
 	}
 	
 	public BDto contentView(String strID) {
 		
+		System.out.println("BDao contentview");
 		upHit(strID);
 		
 		BDto dto = null;
@@ -116,10 +120,11 @@ public class BDao {
 		try {
 			
 			connection = dataSource.getConnection();
-			
+			System.out.println("db connection ok");
 			String query = "select * from mvc_board where bId = ?";
 			preparedStatement = connection.prepareStatement(query);
 			preparedStatement.setInt(1, Integer.parseInt(strID));
+			resultSet = preparedStatement.executeQuery();
 			
 			if (resultSet.next()) {
 				int bId = resultSet.getInt("bId");
