@@ -266,8 +266,9 @@ public class BDao {
 		try {
 			connection = dataSource.getConnection();
 			String query = "insert into mvc_board (bId, bName, bTitle, bContent, bGroup, bStep, bIndent)"
-					+ "values (mvc_board_seq.nextval, ?, ?, ?, ?, ?, ?, ?)";
+					+ "values (mvc_board_seq.nextval, ?, ?, ?, ?, ?, ?)";
 			preparedStatement = connection.prepareStatement(query);
+			
 			
 			preparedStatement.setString(1, bName);
 			preparedStatement.setString(2, bTitle);
