@@ -299,6 +299,7 @@ public class BDao {
 		try {
 			connection = dataSource.getConnection();
 			String query = "update mvc_board set bStep = bStep + 1 where bGroup = ? and bStep > ?";
+			//그룹이 같고 원래 글 보다 높은 그룹에 해당되는 객체들의 스탭을 올려줌
 			preparedStatement = connection.prepareStatement(query);
 			preparedStatement.setInt(1, Integer.parseInt(strGroup));
 			preparedStatement.setInt(2, Integer.parseInt(strStep));
